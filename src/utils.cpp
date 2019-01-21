@@ -36,13 +36,48 @@ cv::Mat GetImage(std::string fn)
 	}
 	return image;
 }
+
+int SetImage(cv::Mat& mat)
+{
+	cv::imshow("CppImage",mat);
+	return mat.cols * mat.rows * mat.channels();
+}
+
+
+class Pet
+{
+    public:
+        Pet(const std::string &name, int hunger) : name(name), hunger(hunger) {}
+        ~Pet() {}
+
+        void go_for_a_walk() { hunger++; }
+        const std::string &get_name() const { return name; }
+        int get_hunger() const { return hunger; }
+
+    private:
+        std::string name;
+        int hunger;
+};
+
+
 PYBIND11_MODULE(pym, m)
 {
 	m.doc() = "PythonCallCpp";
 
     m.def("addnum", &addnum);
 	m.def("GetImage", &GetImage);
+	m.def("SetImage", &SetImage);
 
+
+ 	// bindings to Pet class
+    py::class_<Pet>(m, "Pet")
+        .def(py::init<const std::string &, int>())
+        .def("go_for_a_walk", &Pet::go_for_a_walk)
+        .def("get_hunger", &Pet::get_hunger)
+        .def("get_name", &Pet::get_name);
+	/*
+
+	
 	py::class_<cv::Mat>(m, "Image", py::buffer_protocol())
 		.def_buffer([](cv::Mat& im) -> py::buffer_info {
 		return py::buffer_info(
@@ -63,7 +98,7 @@ PYBIND11_MODULE(pym, m)
 					sizeof(unsigned char)
 				}
 				);
-	});
+	});*/
 
 }
 // }
