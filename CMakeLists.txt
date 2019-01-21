@@ -8,7 +8,9 @@ SET(CMAKE_CXX_COMPILER "/usr/bin/g++") # 默认c++编译器
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 set(CMAKE_Cxx_FLAGS "${CMAKE_Cxx_FLAGS} -fPIC")
 
-SET(OUTPUTNAME "pym")
+
+SET(OUTPUT_NAME "pym")
+SET(OUTPUT_SO_NAME "pym")
 SET(PYTHONDEV_DIR "/home/michael/DevelopProj/PythonDev/Python-3.6.7/")
 SET(PYBIND11_DIR "/home/michael/DevelopProj/pybind11/pybind11/")
 SET(OPENCV_DIR "/home/michael/DevelopProj/OpenCV3.4.0/opencv-3.4.0/") #opencv dir
@@ -20,6 +22,7 @@ find_package(Threads REQUIRED)
 #add_definitions(-DUSE_DLL)
 #add_definitions(-DDEBUG) # 相当于代码中 #define DEBUG
 SET(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin") # 可执行文件输出目录
+SET(LIBRARY_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin") # 可执行文件输出目录
 
 
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/include")
@@ -34,26 +37,32 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}include")
 #INCLUDE_DIRECTORIES("${PYBIND11_DIR}include")
 
 #add_subdirectory("${PROJECT_SOURCE_DIR}/src")
-#add_executable( main
-#              ./src/main.cpp 
-#              ./src/utils.cpp
-#              )
-add_library(${OUTPUTNAME} SHARED
+
+# add_executable(${OUTPUT_NAME} 
+#               ./src/main.cpp 
+#               ./src/utils.cpp
+#               )
+
+add_library(${OUTPUT_NAME} SHARED
       ./src/utils.cpp)
-set_target_properties(${OUTPUTNAME} PROPERTIES PREFIX "")
+set_target_properties(${OUTPUT_NAME} PROPERTIES PREFIX "")
 
 # .SO file extension on Linux/Mac OS
-set_target_properties(${OUTPUTNAME} PROPERTIES SUFFIX ".so")
+set_target_properties(${OUTPUT_NAME} PROPERTIES SUFFIX ".so")
 
 
 link_directories("/usr/local/ibs")
 message(STATUS "Opencv Libs : ${OpenCV_LIBS}")
-target_link_libraries(${OUTPUTNAME} ${OpenCV_LIBS})
-target_link_libraries(${OUTPUTNAME} "python3.6m")
 
-target_link_libraries(${OUTPUTNAME} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(${OUTPUTNAME} ${CMAKE_DL_LIBS})
-target_link_libraries(${OUTPUTNAME} util)
+target_link_libraries(${OUTPUT_NAME} 
+                        ${OpenCV_LIBS})
+target_link_libraries(${OUTPUT_NAME} "python3.6m")
+
+target_link_libraries(${OUTPUT_NAME} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${OUTPUT_NAME} ${CMAKE_DL_LIBS})
+target_link_libraries(${OUTPUT_NAME} util)
+
+
 #link_libraries("${Opencv_LIBS}")
 #target_link_libraries(${ProjectName} "${OpenCV_LIBS}")
 #target_link_libraries( ${ProjectName} opencv_core
